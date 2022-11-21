@@ -330,9 +330,11 @@ pseudo_log_trans <- function(sigma = 1, base = exp(1)) {
 #'   abbreviation so that "p" + distribution is a valid cumulative distribution
 #'   function, "q" + distribution is a valid quantile function, and
 #'   "d" + distribution is a valid probability density function.
-#' @param ... other arguments passed on to distribution and quantile functions
+#' @param ... other arguments passed on to distribution, quantile, and density functions
+#' @seealso [quantile_trans()], the inverse of this transformation
 #' @export
 #' @examples
+#' plot(probability_trans("logis"), xlim = c(0, 1))
 #' plot(logit_trans(), xlim = c(0, 1))
 #' plot(probit_trans(), xlim = c(0, 1))
 probability_trans <- function(distribution, ...) {
@@ -355,6 +357,35 @@ logit_trans <- function() probability_trans("logis")
 #' @export
 #' @rdname probability_trans
 probit_trans <- function() probability_trans("norm")
+
+#' Quantile transformation
+#'
+#' @inheritParams probability_trans
+#' @seealso [probability_trans()], the inverse of this transformation
+#' @export
+#' @examples
+#' plot(quantile_trans("logis"), xlim = c(-3, 3))
+#' plot(inv_logit_trans(), xlim = c(-3, 3))
+#' plot(inv_probit_trans(), xlim = c(-3, 3))
+quantile_trans <- function(distribution, ...) {
+  qfun <- match.fun(paste0("q", distribution))
+  pfun <- match.fun(paste0("p", distribution))
+  dfun <- match.fun(paste0("d", distribution))
+
+  trans_new(
+    paste0("quantile-", distribution),
+    function(x) pfun(x, ...),
+    function(x) qfun(x, ...),
+    d_transform = function(x) dfun(x, ...),
+    d_inverse = function(x) 1 / dfun(qfun(x, ...), ...)
+  )
+}
+#' @export
+#' @rdname quantile_trans
+inv_logit_trans <- function() quantile_trans("logis")
+#' @export
+#' @rdname quantile_trans
+inv_probit_trans <- function() quantile_trans("norm")
 
 #' Reciprocal transformation
 #'

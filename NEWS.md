@@ -26,6 +26,10 @@
 * Transformation objects can optionally include the derivatives of the transform
   and the inverse transform (@mjskay, #322).
 
+* New `quantile_trans()` (and shortcuts `inv_logit_trans()` and
+  `inv_probit_trans()`) implements the inverse of `probability_trans()`
+  (@mjskay).
+
 # scales 1.2.1
 
 * Re-document to fix HTML issues in `.Rd`.

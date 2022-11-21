@@ -249,6 +249,15 @@ test_that("logit_trans derivatives work", {
   expect_equal(trans$d_inverse(x), 1 / trans$d_transform(trans$inverse(x)))
 })
 
+test_that("inv_logit_trans derivatives work", {
+  trans <- inv_logit_trans()
+  expect_equal(trans$d_transform(c(0, 1, 2)), dlogis(c(0, 1, 2)))
+  expect_equal(trans$d_inverse(c(0.1, 0.5, 0.8)), c(100/9, 4, 6.25))
+  x <- seq(0.1, 0.9, length.out = 10)
+  expect_equal(trans$d_transform(x), 1 / trans$d_inverse(trans$transform(x)))
+  expect_equal(trans$d_inverse(x), 1 / trans$d_transform(trans$inverse(x)))
+})
+
 test_that("reciprocal_trans derivatives work", {
   trans <- reciprocal_trans()
   expect_equal(trans$d_transform(c(0.1, 1, 10)), c(-100, -1, -0.01))
